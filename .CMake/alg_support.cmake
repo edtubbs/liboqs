@@ -243,6 +243,9 @@ cmake_dependent_option(OQS_ENABLE_SIG_snova_SNOVA_37_8_4 "" ON "OQS_ENABLE_SIG_S
 cmake_dependent_option(OQS_ENABLE_SIG_snova_SNOVA_24_5_5 "" ON "OQS_ENABLE_SIG_SNOVA" OFF)
 cmake_dependent_option(OQS_ENABLE_SIG_snova_SNOVA_60_10_4 "" ON "OQS_ENABLE_SIG_SNOVA" OFF)
 cmake_dependent_option(OQS_ENABLE_SIG_snova_SNOVA_29_6_5 "" ON "OQS_ENABLE_SIG_SNOVA" OFF)
+
+option(OQS_ENABLE_SIG_RACCOON_G "Enable raccoong algorithm family" OFF)
+cmake_dependent_option(OQS_ENABLE_SIG_raccoon_g_44 "" ON "OQS_ENABLE_SIG_RACCOON_G" OFF)
 ##### OQS_COPY_FROM_UPSTREAM_FRAGMENT_ADD_ENABLE_BY_ALG_END
 ##### OQS_COPY_FROM_SLH_DSA_FRAGMENT_ADD_ENABLE_BY_ALG_START
 option(OQS_ENABLE_SIG_SLH_DSA "Enable slh_dsa algorithm family" ON)

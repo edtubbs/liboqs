@@ -138,6 +138,8 @@ extern "C" {
 #define OQS_SIG_alg_snova_SNOVA_60_10_4 "SNOVA_60_10_4"
 /** Algorithm identifier for SNOVA_29_6_5 */
 #define OQS_SIG_alg_snova_SNOVA_29_6_5 "SNOVA_29_6_5"
+/** Algorithm identifier for Raccoon-G-44 */
+#define OQS_SIG_alg_raccoon_g_44 "Raccoon-G-44"
 ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_ALG_IDENTIFIER_END
 ///// OQS_COPY_FROM_SLH_DSA_FRAGMENT_ALGID_START
 /** Algorithm identifier for slh_dsa_pure_sha2_128s */
@@ -462,7 +464,7 @@ extern "C" {
 ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_ALGS_LENGTH_START
 
 /** Number of algorithm identifiers above. */
-#define OQS_SIG_algs_length 53 + OQS_SIG_SLH_DSA_algs_length
+#define OQS_SIG_algs_length 54 + OQS_SIG_SLH_DSA_algs_length
 ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_ALGS_LENGTH_END
 
 /**
@@ -631,6 +633,21 @@ OQS_API OQS_SIG *OQS_SIG_new(const char *method_name);
 OQS_API OQS_STATUS OQS_SIG_keypair(const OQS_SIG *sig, uint8_t *public_key, uint8_t *secret_key);
 
 /**
+ * Deterministic keypair generation algorithm.
+ *
+ * The seed format and size are implementation specific.
+ * Currently only supported by Raccoon-G-44; unsupported algorithms return OQS_ERROR.
+ *
+ * @param[in] sig The OQS_SIG object representing the signature scheme.
+ * @param[out] public_key The public key represented as a byte string.
+ * @param[out] secret_key The secret key represented as a byte string.
+ * @param[in] seed Deterministic seed for key generation.
+ * @param[in] seed_len The length of seed.
+ * @return OQS_SUCCESS or OQS_ERROR
+ */
+OQS_API OQS_STATUS OQS_SIG_keypair_det(const OQS_SIG *sig, uint8_t *public_key, uint8_t *secret_key, const uint8_t *seed, size_t seed_len);
+
+/**
  * Signature generation algorithm.
  *
  * Caller is responsible for allocating sufficient memory for `signnature`,
@@ -695,6 +712,54 @@ OQS_API OQS_STATUS OQS_SIG_verify(const OQS_SIG *sig, const uint8_t *message, si
 OQS_API OQS_STATUS OQS_SIG_verify_with_ctx_str(const OQS_SIG *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *ctx_str, size_t ctx_str_len, const uint8_t *public_key);
 
 /**
+ * Derive a child public key using non-hardened HD derivation.
+ * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
+ *
+ * @param[in] pk_parent Parent public key.
+ * @param[in] chaincode 32-byte chaincode used as derivation salt.
+ * @param[in] index Child index.
+ * @param[out] pk_child Output child public key.
+ * @return OQS_SUCCESS or OQS_ERROR
+ */
+OQS_API OQS_STATUS OQS_SIG_hd_derive_pub(const uint8_t *pk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *pk_child);
+
+/**
+ * Derive a child secret/public key pair using HD derivation.
+ * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
+ *
+ * @param[in] sk_parent Parent secret key.
+ * @param[in] chaincode 32-byte chaincode used as derivation salt.
+ * @param[in] index Child index.
+ * @param[out] sk_child Output child secret key.
+ * @param[out] pk_child Output child public key.
+ * @return OQS_SUCCESS or OQS_ERROR
+ */
+OQS_API OQS_STATUS OQS_SIG_hd_derive_priv(const uint8_t *sk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *sk_child, uint8_t *pk_child);
+
+/**
+ * Rerandomize a public key using fixed randomness.
+ * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
+ *
+ * @param[in] pk_in Input public key.
+ * @param[in] randomness 32-byte rerandomization input.
+ * @param[out] pk_out Output rerandomized public key.
+ * @return OQS_SUCCESS or OQS_ERROR
+ */
+OQS_API OQS_STATUS OQS_SIG_hd_randpk(const uint8_t *pk_in, const uint8_t *randomness, uint8_t *pk_out);
+
+/**
+ * Rerandomize a secret/public key pair using fixed randomness.
+ * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
+ *
+ * @param[in] sk_in Input secret key.
+ * @param[in] randomness 32-byte rerandomization input.
+ * @param[out] sk_out Output rerandomized secret key.
+ * @param[out] pk_out Output rerandomized public key.
+ * @return OQS_SUCCESS or OQS_ERROR
+ */
+OQS_API OQS_STATUS OQS_SIG_hd_randsk(const uint8_t *sk_in, const uint8_t *randomness, uint8_t *sk_out, uint8_t *pk_out);
+
+/**
  * Frees an OQS_SIG object that was constructed by OQS_SIG_new.
  *
  * @param[in] sig The OQS_SIG object to free.
@@ -728,6 +793,9 @@ OQS_API bool OQS_SIG_supports_ctx_str(const char *alg_name);
 #ifdef OQS_ENABLE_SIG_SNOVA
 #include <oqs/sig_snova.h>
 #endif /* OQS_ENABLE_SIG_SNOVA */
+#ifdef OQS_ENABLE_SIG_RACCOON_G
+#include <oqs/sig_raccoong.h>
+#endif /* OQS_ENABLE_SIG_RACCOON_G */
 ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_INCLUDE_END
 ///// OQS_COPY_FROM_SLH_DSA_FRAGMENT_INCLUDE_START
 #ifdef OQS_ENABLE_SIG_SLH_DSA
