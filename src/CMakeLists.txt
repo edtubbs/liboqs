@@ -68,6 +68,10 @@ if(OQS_ENABLE_SIG_SNOVA)
     set(SIG_OBJS ${SIG_OBJS} ${SNOVA_OBJS})
 endif()
 ##### OQS_COPY_FROM_UPSTREAM_FRAGMENT_ADD_ALG_OBJECTS_END
+if(OQS_ENABLE_SIG_RACCOON_G)
+    add_subdirectory(sig/raccoong)
+    set(SIG_OBJS ${SIG_OBJS} ${RACCOONG_OBJS})
+endif()
 
 if(OQS_ENABLE_SIG_SLH_DSA)
     add_subdirectory(sig/slh_dsa)
