@@ -67,7 +67,8 @@ OQS_API const char *OQS_SIG_alg_identifier(size_t i) {
 		OQS_SIG_alg_snova_SNOVA_37_8_4,
 		OQS_SIG_alg_snova_SNOVA_24_5_5,
 		OQS_SIG_alg_snova_SNOVA_60_10_4,
-		OQS_SIG_alg_snova_SNOVA_29_6_5,///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_ALG_IDENTIFIER_END
+		OQS_SIG_alg_snova_SNOVA_29_6_5,
+		OQS_SIG_alg_raccoon_g_44, ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_ALG_IDENTIFIER_END
 		///// OQS_COPY_FROM_SLH_DSA_FRAGMENT_ALGID_START
 		OQS_SIG_alg_slh_dsa_pure_sha2_128s,
 		OQS_SIG_alg_slh_dsa_pure_sha2_128f,
@@ -610,6 +611,13 @@ OQS_API int OQS_SIG_alg_is_enabled(const char *method_name) {
 
 	} else if (0 == strcasecmp(method_name, OQS_SIG_alg_snova_SNOVA_29_6_5)) {
 #ifdef OQS_ENABLE_SIG_snova_SNOVA_29_6_5
+		return 1;
+#else
+		return 0;
+#endif
+
+	} else if (0 == strcasecmp(method_name, OQS_SIG_alg_raccoon_g_44)) {
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
 		return 1;
 #else
 		return 0;
@@ -1934,6 +1942,13 @@ OQS_API OQS_SIG *OQS_SIG_new(const char *method_name) {
 #else
 		return NULL;
 #endif
+
+	} else if (0 == strcasecmp(method_name, OQS_SIG_alg_raccoon_g_44)) {
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+		return OQS_SIG_raccoon_g_44_new();
+#else
+		return NULL;
+#endif
 ///// OQS_COPY_FROM_UPSTREAM_FRAGMENT_NEW_CASE_END
 ///// OQS_COPY_FROM_SLH_DSA_FRAGMENT_SIGNEW_START
 	} else if (0 == strcasecmp(method_name, OQS_SIG_alg_slh_dsa_pure_sha2_128s)) {
@@ -2887,6 +2902,18 @@ OQS_API OQS_STATUS OQS_SIG_keypair(const OQS_SIG *sig, uint8_t *public_key, uint
 	}
 }
 
+OQS_API OQS_STATUS OQS_SIG_keypair_det(const OQS_SIG *sig, uint8_t *public_key, uint8_t *secret_key, const uint8_t *seed, size_t seed_len) {
+	if (sig == NULL || sig->method_name == NULL || public_key == NULL || secret_key == NULL || seed == NULL) {
+		return OQS_ERROR;
+	}
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+	if (0 == strcasecmp(sig->method_name, OQS_SIG_alg_raccoon_g_44)) {
+		return OQS_SIG_raccoon_g_44_keypair_det(public_key, secret_key, seed, seed_len);
+	}
+#endif
+	return OQS_ERROR;
+}
+
 OQS_API OQS_STATUS OQS_SIG_sign(const OQS_SIG *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, const uint8_t *secret_key) {
 	if (sig == NULL || sig->sign(signature, signature_len, message, message_len, secret_key) != OQS_SUCCESS) {
 		return OQS_ERROR;
@@ -2917,6 +2944,52 @@ OQS_API OQS_STATUS OQS_SIG_verify_with_ctx_str(const OQS_SIG *sig, const uint8_t
 	} else {
 		return OQS_SUCCESS;
 	}
+}
+
+OQS_API OQS_STATUS OQS_SIG_hd_derive_pub(const uint8_t *pk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *pk_child) {
+	if (pk_parent == NULL || chaincode == NULL || pk_child == NULL) {
+		return OQS_ERROR;
+	}
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+	return OQS_SIG_raccoon_g_44_hd_derive_pub(pk_parent, chaincode, index, pk_child);
+#else
+	(void)index;
+	return OQS_ERROR;
+#endif
+}
+
+OQS_API OQS_STATUS OQS_SIG_hd_derive_priv(const uint8_t *sk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *sk_child, uint8_t *pk_child) {
+	if (sk_parent == NULL || chaincode == NULL || sk_child == NULL || pk_child == NULL) {
+		return OQS_ERROR;
+	}
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+	return OQS_SIG_raccoon_g_44_hd_derive_priv(sk_parent, chaincode, index, sk_child, pk_child);
+#else
+	(void)index;
+	return OQS_ERROR;
+#endif
+}
+
+OQS_API OQS_STATUS OQS_SIG_hd_randpk(const uint8_t *pk_in, const uint8_t *randomness, uint8_t *pk_out) {
+	if (pk_in == NULL || randomness == NULL || pk_out == NULL) {
+		return OQS_ERROR;
+	}
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+	return OQS_SIG_raccoon_g_44_hd_randpk(pk_in, randomness, pk_out);
+#else
+	return OQS_ERROR;
+#endif
+}
+
+OQS_API OQS_STATUS OQS_SIG_hd_randsk(const uint8_t *sk_in, const uint8_t *randomness, uint8_t *sk_out, uint8_t *pk_out) {
+	if (sk_in == NULL || randomness == NULL || sk_out == NULL || pk_out == NULL) {
+		return OQS_ERROR;
+	}
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
+	return OQS_SIG_raccoon_g_44_hd_randsk(sk_in, randomness, sk_out, pk_out);
+#else
+	return OQS_ERROR;
+#endif
 }
 
 OQS_API bool OQS_SIG_supports_ctx_str(const char *alg_name) {

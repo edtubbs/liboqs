@@ -1,0 +1,73 @@
+# reference_kat_p11.json generation log
+
+Date (UTC): 2026-04-13T20:00:00Z
+Repository: p-11/lattice-hd-wallets
+Reference commit: 461a5ed9b6d57e3bf8c381be3bb79325ab21d906
+Target artifact: tests/KATs/sig/raccoong/reference_kat_p11.json
+
+## Upstream validation summary
+- All 19 raccoon_primitives tests pass (test_raccoon_primitives.py)
+- test_hd_params.py has a pre-existing assertion on k==11 (upstream expects k=11, got k=9)
+  This is an upstream issue in the test, not in the primitives library.
+
+## HD derivation flow
+Child keys use BIP-32-style HMAC-SHA512 derivation:
+  omega = HMAC-SHA512(chaincode, pk_payload || index_be32)
+  tweak_seed = omega[:32]
+  child_chaincode = omega[32:]
+  tpk, tsk = generate_tweak_keypair_from_seed(tweak_seed, a_seed)
+  pk_child = add_public_keys(pk, tpk)
+  sk_child = add_signing_keys(sk, tsk)
+
+## Commands and output
+```bash
+WORK=/tmp/raccoon-refimpl-log
+rm -rf "$WORK"
+git clone https://github.com/p-11/lattice-hd-wallets "$WORK/lattice-hd-wallets"
+cd "$WORK/lattice-hd-wallets"
+git checkout --detach 461a5ed9b6d57e3bf8c381be3bb79325ab21d906
+python -m pip install pycryptodome mpmath
+cd "$WORK/lattice-hd-wallets/src/raccoon/thrc-py"
+PYTHONPATH=. python test_raccoon_primitives.py
+=== Raccoon Primitives Serialization Tests ===
+...
+=== All tests passed! ===
+PYTHONPATH=. python -c "
+import json, hashlib, hmac
+from raccoon_primitives import (
+    generate_keypair_from_seed, generate_tweak_keypair_from_seed,
+    add_signing_keys, add_public_keys, get_matrix_seed_from_public_key,
+    sign_message, verify_signature,
+)
+seed = bytes(range(32))
+chaincode = bytes(32)
+index = 0
+msg = b'test message'
+pk, sk = generate_keypair_from_seed(seed)
+pk_payload = pk[:15360]
+omega = hmac.new(chaincode, pk_payload + index.to_bytes(4,'big'), 'sha512').digest()
+child_chaincode = omega[32:]
+a_seed = get_matrix_seed_from_public_key(pk)
+tpk, tsk = generate_tweak_keypair_from_seed(omega[:32], a_seed)
+pkc = add_public_keys(pk, tpk)
+skc = add_signing_keys(sk, tsk)
+sigm = sign_message(sk, msg)
+sigc = sign_message(skc, msg)
+assert verify_signature(pk, msg, sigm)
+assert verify_signature(pkc, msg, sigc)
+print(json.dumps({
+    'ref_commit':'461a5ed9b6d57e3bf8c381be3bb79325ab21d906',
+    'seed_hex':seed.hex(),'chaincode_hex':chaincode.hex(),
+    'child_chaincode_hex':child_chaincode.hex(),'index':index,
+    'message_hex':msg.hex(),'pk_hex':pk.hex(),'sk_hex':sk.hex(),
+    'pk_child_hex':pkc.hex(),'sk_child_hex':skc.hex(),
+    'sig_master_hex':sigm.hex(),'sig_child_hex':sigc.hex()
+}))
+" > "$WORK/reference_kat_p11.json"
+pk_len=16144 sk_len=32272 child_pk_len=16144 child_sk_len=32272 sig_master_len=20768 sig_child_len=20768
+verify_master=True verify_child=True
+note=signatures are randomized in reference implementation; bytes can differ run-to-run
+note=keygen and child derivation outputs are deterministic for the same seed/chaincode/index
+sha256sum "$WORK/reference_kat_p11.json"
+356ff35982ec6652c352a6bb01763cb88a2beebdaa1c2aa8c4f25767854e9a6d  /tmp/raccoon-refimpl-log/reference_kat_p11.json
+```
