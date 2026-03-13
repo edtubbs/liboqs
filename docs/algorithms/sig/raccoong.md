@@ -21,6 +21,8 @@ This implementation follows the paper's Raccoon-G construction and HD derivation
 |:-------------:|:---------------|-------------------:|------------------------:|------------------------:|-----------------------:|
 | Raccoon-G-44  | EUF-CMA        |                  2 |                   16384 |                   32768 |                  32768 |
 
+For ABI/binary compatibility, these exported sizes are treated as a contract in this repository. Internal tests verify they remain unchanged and that fixed-size key buffers keep canonical zero padding in reserved trailing bytes.
+
 ## HD-specific API surface
 
 `Raccoon-G-44` exposes non-hardened HD helper functions:

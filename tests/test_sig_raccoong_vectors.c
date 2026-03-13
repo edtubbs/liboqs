@@ -36,6 +36,8 @@ const uint8_t master_seed[32] = {
 };
 const uint8_t chaincode[OQS_SIG_raccoon_g_44_length_chaincode] = {0};
 const uint8_t msg[] = "test message";
+const size_t pk_payload_bytes = (size_t)(4 * 4 + 4) * 256 * 3;
+const size_t sk_payload_bytes = (size_t)(4 + 4) * 256 * 3 + OQS_SIG_raccoon_g_44_length_public_key;
 
 uint8_t pk[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk[OQS_SIG_raccoon_g_44_length_secret_key];
@@ -49,6 +51,44 @@ size_t sig_master_len = 0, sig_child_len = 0;
 if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_seed)) == OQS_SUCCESS,
           "Raccoon-G-44 DetKeyGen vector failed") != EXIT_SUCCESS) {
 goto err;
+}
+OQS_SIG *sig = OQS_SIG_new(OQS_SIG_alg_raccoon_g_44);
+if (check(sig != NULL, "OQS_SIG_new(Raccoon-G-44) failed") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(sig->length_public_key == OQS_SIG_raccoon_g_44_length_public_key &&
+          sig->length_public_key == 16384,
+          "Binary compatibility failure: public key size changed") != EXIT_SUCCESS) {
+OQS_SIG_free(sig);
+goto err;
+}
+if (check(sig->length_secret_key == OQS_SIG_raccoon_g_44_length_secret_key &&
+          sig->length_secret_key == 32768,
+          "Binary compatibility failure: secret key size changed") != EXIT_SUCCESS) {
+OQS_SIG_free(sig);
+goto err;
+}
+if (check(sig->length_signature == OQS_SIG_raccoon_g_44_length_signature &&
+          sig->length_signature == 32768,
+          "Binary compatibility failure: signature size changed") != EXIT_SUCCESS) {
+OQS_SIG_free(sig);
+goto err;
+}
+OQS_SIG_free(sig);
+if (check(pk_payload_bytes < sizeof(pk) &&
+          sk_payload_bytes < sizeof(sk),
+          "Internal test assumptions invalid for Raccoon-G-44 payload sizes") != EXIT_SUCCESS) {
+goto err;
+}
+for (size_t i = pk_payload_bytes; i < sizeof(pk); i++) {
+if (check(pk[i] == 0, "Binary compatibility failure: PK padding is not canonical zero") != EXIT_SUCCESS) {
+goto err;
+}
+}
+for (size_t i = sk_payload_bytes; i < sizeof(sk); i++) {
+if (check(sk[i] == 0, "Binary compatibility failure: SK padding is not canonical zero") != EXIT_SUCCESS) {
+goto err;
+}
 }
 
 if (check(OQS_SIG_hd_derive_pub(pk, chaincode, 0, pk_child_pub) == OQS_SUCCESS,
