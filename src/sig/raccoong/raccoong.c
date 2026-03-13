@@ -386,8 +386,8 @@ int32_t (*sp)[RACCOONG_44_N] = (int32_t (*)[RACCOONG_44_N])sp_flat;
 int32_t (*ep)[RACCOONG_44_N] = (int32_t (*)[RACCOONG_44_N])ep_flat;
 int32_t delta[RACCOONG_44_K][RACCOONG_44_N];
 
-	raccoong_sample_gaussian_vec(sp_flat, RACCOONG_44_L, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandPK/s_prime");
-	raccoong_sample_gaussian_vec(ep_flat, RACCOONG_44_K, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandPK/e_prime");
+    raccoong_sample_gaussian_vec(sp_flat, RACCOONG_44_L, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandPK/s_prime");
+    raccoong_sample_gaussian_vec(ep_flat, RACCOONG_44_K, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandPK/e_prime");
 raccoong_compute_t(delta, A, sp, ep);
 
 for (size_t i = 0; i < RACCOONG_44_K; i++) {
@@ -417,7 +417,7 @@ return OQS_ERROR;
 
 int32_t sp_flat[RACCOONG_44_L * RACCOONG_44_N];
 int32_t (*sp)[RACCOONG_44_N] = (int32_t (*)[RACCOONG_44_N])sp_flat;
-	raccoong_sample_gaussian_vec(sp_flat, RACCOONG_44_L, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandSK/s_prime");
+    raccoong_sample_gaussian_vec(sp_flat, RACCOONG_44_L, randomness, RACCOONG_44_RERAND_BYTES, "Raccoon-G-44/RandSK/s_prime");
 
 for (size_t i = 0; i < RACCOONG_44_L; i++) {
 for (size_t n = 0; n < RACCOONG_44_N; n++) {
