@@ -2,9 +2,20 @@
 
 - **Algorithm type**: Digital signature scheme with HD derivation helpers.
 - **Parameter set implemented in liboqs**: `Raccoon-G-44`.
-- **Claimed security level**: aligned with ML-DSA-44 (NIST level 2 target).
+- **Normative source**: *Lattice HD Wallets: Post-Quantum BIP32 Hierarchical Deterministic Wallets from Lattice Assumptions* (ePrint 2026/380), received 2026-02-24, revised 2026-02-27.
 
-## Parameter set summary
+## Paper reference summary
+
+This implementation follows the paper's Raccoon-G construction and HD derivation flow:
+
+- **DetKeyGen**: Section 4 (`A <- ExpandA(ρ)`, `s,e <- SampleGaussian`, `t = A·s + e`, `pk=(A,t)`, `sk=s`).
+- **RandPK / RandSK**: Section 4 (rerandomization from deterministic `ω`).
+- **CKDer_pub / CKDer_priv**: Section 4 (non-hardened derivation from `HMAC-SHA512(chaincode, serialize(pk)||index)`).
+- **Gaussian sampling model and bounds**: Section 5.2 and Appendix C.
+- **Raccoon-G-44 parameters**: Section 3 and Appendix B.
+- **Reference vectors and examples**: Appendix D.
+
+## Parameter set summary (Raccoon-G-44)
 
 | Parameter set | Security model | Claimed NIST Level | Public key size (bytes) | Secret key size (bytes) | Signature size (bytes) |
 |:-------------:|:---------------|-------------------:|------------------------:|------------------------:|-----------------------:|
@@ -19,22 +30,16 @@
 - `OQS_SIG_hd_randpk`
 - `OQS_SIG_hd_randsk`
 
-These functions are provided to support deterministic child key and rerandomization flows with a 32-byte chaincode / rerandomization input.
+These functions use a 32-byte chaincode and 64-byte rerandomization seed (`ω`, from HMAC-SHA512 output).
 
 ## How to build and test
 
 ```bash
-cmake -S . -B build -GNinja
-cmake --build build --target oqs test_sig example_sig_raccoong
-./build/tests/test_sig Raccoon-G-44 1 1 0
-./build/tests/example_sig_raccoong
-```
-
-For a focused build that only enables this family:
-
-```bash
-cmake -S . -B build-raccoong -GNinja \
+cmake -S . -B build -GNinja \
   -DOQS_ENABLE_SIG_RACCOON_G=ON \
   -DOQS_ENABLE_SIG_raccoon_g_44=ON
-cmake --build build-raccoong --target oqs test_sig
+cmake --build build --target oqs test_sig example_sig_raccoong test_sig_raccoong_vectors
+./build/tests/test_sig "Raccoon-G-44"
+./build/tests/example_sig_raccoong
+./build/tests/test_sig_raccoong_vectors
 ```

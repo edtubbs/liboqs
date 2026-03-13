@@ -15,7 +15,7 @@
 #define OQS_SIG_raccoon_g_44_length_signature 32768
 #define OQS_SIG_raccoon_g_44_length_keypair_seed 64
 #define OQS_SIG_raccoon_g_44_length_chaincode 32
-#define OQS_SIG_raccoon_g_44_length_rerandomization 32
+#define OQS_SIG_raccoon_g_44_length_rerandomization 64
 
 OQS_SIG *OQS_SIG_raccoon_g_44_new(void);
 OQS_API OQS_STATUS OQS_SIG_raccoon_g_44_keypair(uint8_t *public_key, uint8_t *secret_key);
