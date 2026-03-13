@@ -42,10 +42,12 @@ const size_t sk_payload_bytes = (size_t)(4 + 4) * 256 * 3 + OQS_SIG_raccoon_g_44
 uint8_t pk[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk[OQS_SIG_raccoon_g_44_length_secret_key];
 uint8_t pk_child_pub[OQS_SIG_raccoon_g_44_length_public_key];
+uint8_t pk_child_pub_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t pk_child_priv[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk_child[OQS_SIG_raccoon_g_44_length_secret_key];
 uint8_t sig_master[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t sig_child[OQS_SIG_raccoon_g_44_length_signature];
+uint8_t pk_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
 size_t sig_master_len = 0, sig_child_len = 0;
 
 if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_seed)) == OQS_SUCCESS,
@@ -90,9 +92,19 @@ if (check(sk[i] == 0, "Binary compatibility failure: SK padding is not canonical
 goto err;
 }
 }
+memcpy(pk_noncanonical, pk, sizeof(pk_noncanonical));
+memset(pk_noncanonical + pk_payload_bytes, 0xA5, sizeof(pk_noncanonical) - pk_payload_bytes);
 
 if (check(OQS_SIG_hd_derive_pub(pk, chaincode, 0, pk_child_pub) == OQS_SUCCESS,
           "CKDer_pub vector failed") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(OQS_SIG_hd_derive_pub(pk_noncanonical, chaincode, 0, pk_child_pub_noncanonical) == OQS_SUCCESS,
+          "CKDer_pub with non-canonical PK padding failed") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(OQS_MEM_secure_bcmp(pk_child_pub, pk_child_pub_noncanonical, sizeof(pk_child_pub)) == 0,
+          "HD derivation must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
 goto err;
 }
 if (check(OQS_SIG_hd_derive_priv(sk, chaincode, 0, sk_child, pk_child_priv) == OQS_SUCCESS,
@@ -110,6 +122,10 @@ goto err;
 }
 if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_master_len, pk) == OQS_SUCCESS,
           "Master signature verification failed") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_master_len, pk_noncanonical) == OQS_SUCCESS,
+          "Master signature verification must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
 goto err;
 }
 

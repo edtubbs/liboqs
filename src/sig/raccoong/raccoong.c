@@ -31,6 +31,7 @@
 #define RACCOONG_44_PK_A_OFFSET 0
 #define RACCOONG_44_PK_T_OFFSET (RACCOONG_44_PK_A_OFFSET + RACCOONG_44_A_BYTES)
 #define RACCOONG_44_PK_PAD_OFFSET (RACCOONG_44_PK_T_OFFSET + RACCOONG_44_T_BYTES)
+#define RACCOONG_44_PK_PAYLOAD_BYTES RACCOONG_44_PK_PAD_OFFSET
 
 #define RACCOONG_44_SK_S_OFFSET 0
 #define RACCOONG_44_SK_E_OFFSET (RACCOONG_44_SK_S_OFFSET + RACCOONG_44_S_BYTES)
@@ -347,7 +348,7 @@ return OQS_ERROR;
 
 const uint8_t *public_key = secret_key + RACCOONG_44_SK_PK_OFFSET;
 raccoong_44_shake256_domain(signature, RACCOONG_44_SIGNATURE_BYTES,
-                            "Raccoon-G-44/Sign-FS", public_key, RACCOONG_44_PUBLIC_KEY_BYTES, message, message_len, NULL, 0);
+                            "Raccoon-G-44/Sign-FS", public_key, RACCOONG_44_PK_PAYLOAD_BYTES, message, message_len, NULL, 0);
 *signature_len = RACCOONG_44_SIGNATURE_BYTES;
 return OQS_SUCCESS;
 }
@@ -363,7 +364,7 @@ return OQS_ERROR;
 }
 
 raccoong_44_shake256_domain(expected, RACCOONG_44_SIGNATURE_BYTES,
-                            "Raccoon-G-44/Sign-FS", public_key, RACCOONG_44_PUBLIC_KEY_BYTES, message, message_len, NULL, 0);
+                            "Raccoon-G-44/Sign-FS", public_key, RACCOONG_44_PK_PAYLOAD_BYTES, message, message_len, NULL, 0);
 int cmp = OQS_MEM_secure_bcmp(expected, signature, RACCOONG_44_SIGNATURE_BYTES);
 OQS_MEM_secure_free(expected, RACCOONG_44_SIGNATURE_BYTES);
 return (cmp == 0) ? OQS_SUCCESS : OQS_ERROR;
@@ -434,10 +435,10 @@ OQS_STATUS raccoong_44_hd_derive_pub(const uint8_t *pk_parent, const uint8_t *ch
 if (pk_parent == NULL || chaincode == NULL || pk_child == NULL) {
 return OQS_ERROR;
 }
-uint8_t msg[RACCOONG_44_PUBLIC_KEY_BYTES + 4];
+uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
-memcpy(msg, pk_parent, RACCOONG_44_PUBLIC_KEY_BYTES);
-raccoong_u32_to_be(msg + RACCOONG_44_PUBLIC_KEY_BYTES, index);
+memcpy(msg, pk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
+raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
 raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg));
 return raccoong_44_hd_randpk(pk_parent, omega, pk_child);
 }
@@ -450,10 +451,10 @@ return OQS_ERROR;
 uint8_t pk_parent[RACCOONG_44_PUBLIC_KEY_BYTES];
 memcpy(pk_parent, sk_parent + RACCOONG_44_SK_PK_OFFSET, RACCOONG_44_PUBLIC_KEY_BYTES);
 
-uint8_t msg[RACCOONG_44_PUBLIC_KEY_BYTES + 4];
+uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
-memcpy(msg, pk_parent, RACCOONG_44_PUBLIC_KEY_BYTES);
-raccoong_u32_to_be(msg + RACCOONG_44_PUBLIC_KEY_BYTES, index);
+memcpy(msg, pk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
+raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
 raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg));
 
 OQS_STATUS rc = raccoong_44_hd_randsk(sk_parent, omega, sk_child, pk_child);
