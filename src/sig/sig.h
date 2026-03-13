@@ -741,7 +741,7 @@ OQS_API OQS_STATUS OQS_SIG_hd_derive_priv(const uint8_t *sk_parent, const uint8_
  * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
  *
  * @param[in] pk_in Input public key.
- * @param[in] randomness 32-byte rerandomization input.
+ * @param[in] randomness 64-byte rerandomization input.
  * @param[out] pk_out Output rerandomized public key.
  * @return OQS_SUCCESS or OQS_ERROR
  */
@@ -752,7 +752,7 @@ OQS_API OQS_STATUS OQS_SIG_hd_randpk(const uint8_t *pk_in, const uint8_t *random
  * Currently only supported by Raccoon-G-44; returns OQS_ERROR otherwise.
  *
  * @param[in] sk_in Input secret key.
- * @param[in] randomness 32-byte rerandomization input.
+ * @param[in] randomness 64-byte rerandomization input.
  * @param[out] sk_out Output rerandomized secret key.
  * @param[out] pk_out Output rerandomized public key.
  * @return OQS_SUCCESS or OQS_ERROR
