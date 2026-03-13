@@ -22,12 +22,12 @@ printf("Raccoon-G-44 not enabled at compile-time.\n");
 OQS_destroy();
 return EXIT_SUCCESS;
 #else
-/*
- * Paper vector anchors (ePrint 2026/380, Appendix D):
- * - master seed: 000102...1f
- * - non-hardened child at index 0 with all-zero chaincode
- * - message: "test message"
- */
+	/*
+	 * Deterministic reproducibility anchors derived from the implemented
+	 * ePrint 2026/380 Section 4/5 algorithm flow.
+	 * Note: the paper's appendices stop at A/B/C and do not include
+	 * canonical vector hex dumps.
+	 */
 const uint8_t master_seed[32] = {
 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -82,7 +82,7 @@ if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_child, sig_child
 goto err;
 }
 
-printf("Raccoon-G-44 paper-vector anchored tests passed.\n");
+	printf("Raccoon-G-44 deterministic vector tests passed.\n");
 OQS_destroy();
 return EXIT_SUCCESS;
 

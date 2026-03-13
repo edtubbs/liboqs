@@ -13,7 +13,7 @@ This implementation follows the paper's Raccoon-G construction and HD derivation
 - **CKDer_pub / CKDer_priv**: Section 4 (non-hardened derivation from `HMAC-SHA512(chaincode, serialize(pk)||index)`).
 - **Gaussian sampling model and bounds**: Section 5.2 and Appendix C.
 - **Raccoon-G-44 parameters**: Section 3 and Appendix B.
-- **Reference vectors and examples**: Appendix D.
+- **Appendix coverage in the paper**: Appendix A (background), Appendix B (Raccoon-G construction/parameters), Appendix C (omitted proofs). The paper does not provide canonical test vectors.
 
 ## Parameter set summary (Raccoon-G-44)
 
@@ -31,6 +31,14 @@ This implementation follows the paper's Raccoon-G construction and HD derivation
 - `OQS_SIG_hd_randsk`
 
 These functions use a 32-byte chaincode and 64-byte rerandomization seed (`ω`, from HMAC-SHA512 output).
+
+## Test-vector policy in this repository
+
+Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_raccoong_vectors` uses deterministic, reproducible in-repo vectors generated from the implemented DetKeyGen/CKDer flows (fixed seed, chaincode, and message).
+
+## Additional implementation reference
+
+The HD derivation wiring was also cross-checked against `p-11/lattice-hd-wallets/src/raccoon` as an implementation reference for derivation flow and serialization usage. Cryptographic behavior in liboqs remains implemented natively in C in this repository.
 
 ## How to build and test
 
