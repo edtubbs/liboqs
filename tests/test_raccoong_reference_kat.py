@@ -31,4 +31,6 @@ def test_raccoon_g_reference_kat_generation_log_present():
 
     assert "Reference commit: 461a5ed9b6d57e3bf8c381be3bb79325ab21d906" in text
     assert "Target artifact: tests/KATs/sig/raccoong/reference_kat_p11.json" in text
+    assert "Inline one-off script; no repository file named generate_vectors.py is used." in text
+    assert "p-11/lattice-hd-wallets/src/raccoon/thrc-py" in text
     assert "deterministic_fields_match=ok" in text

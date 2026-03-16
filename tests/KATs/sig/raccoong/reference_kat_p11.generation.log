@@ -17,7 +17,12 @@ curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d5
 curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_core.py" -o "/tmp/raccoon-refimpl-log/thrc_core.py"
 curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_gauss.py" -o "/tmp/raccoon-refimpl-log/thrc_gauss.py"
 python -m pip install pycryptodome mpmath
-python generate_vectors.py
+python - <<'PY'
+# Inline one-off script; no repository file named generate_vectors.py is used.
+# It imports only the p-11 reference modules downloaded above from:
+#   p-11/lattice-hd-wallets/src/raccoon/thrc-py
+...
+PY
 pk_len=16144 sk_len=32272 child_pk_len=16144 child_sk_len=32272 sig_master_len=20768 sig_child_len=20768
 generated=/tmp/raccoon-refimpl-log/reference_kat_p11.generated.json
 deterministic_fields_match=ok
