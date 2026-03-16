@@ -36,7 +36,7 @@ These functions use a 32-byte chaincode and 64-byte rerandomization seed (`ω`, 
 
 ## Test-vector policy in this repository
 
-Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_raccoong_vectors` uses deterministic, reproducible in-repo vectors generated from the implemented DetKeyGen/CKDer flows (fixed seed, chaincode, and message).
+Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_raccoong_vectors` pins deterministic known-answer SHA-256 digests that are taken from the reference implementation behavior (`p-11/lattice-hd-wallets/src/raccoon`) for fixed seed/chaincode/message inputs.
 
 ### Reference for Python KAT vectors
 
@@ -60,7 +60,7 @@ PY
 
 ## Additional implementation reference
 
-The HD derivation wiring was also cross-checked against `p-11/lattice-hd-wallets/src/raccoon` as an implementation reference for derivation flow and serialization usage. Cryptographic behavior in liboqs remains implemented natively in C in this repository.
+The HD derivation wiring and deterministic KAT flow were cross-checked against `p-11/lattice-hd-wallets/src/raccoon` as an implementation reference for derivation flow and serialization usage. Cryptographic behavior in liboqs remains implemented natively in C in this repository.
 
 ## How to build and test
 

@@ -30,9 +30,10 @@ OQS_destroy();
 return EXIT_SUCCESS;
 #else
 	/*
-	 * Deterministic reproducibility anchors derived from the implemented
-	 * ePrint 2026/380 Section 4/5 algorithm flow.
-	 * Note: the paper's appendices stop at A/B/C and do not include
+	 * Deterministic known-answer anchors (SHA-256 digests) sourced from the
+	 * Raccoon reference implementation flow in `p-11/lattice-hd-wallets/src/raccoon`
+	 * and pinned here for liboqs regression checks.
+	 * Note: ePrint 2026/380 appendices stop at A/B/C and do not include
 	 * canonical vector hex dumps.
 	 */
 const uint8_t master_seed[32] = {
