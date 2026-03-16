@@ -8,21 +8,17 @@ Target artifact: tests/KATs/sig/raccoong/reference_kat_p11.json
 ## Commands and output
 ```bash
 WORK=/tmp/raccoon-refimpl-log
-mkdir -p "$WORK"
-base=https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/nist_kat_drbg.py" -o "/tmp/raccoon-refimpl-log/nist_kat_drbg.py"
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/polyr.py" -o "/tmp/raccoon-refimpl-log/polyr.py"
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/raccoon_primitives.py" -o "/tmp/raccoon-refimpl-log/raccoon_primitives.py"
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_api.py" -o "/tmp/raccoon-refimpl-log/thrc_api.py"
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_core.py" -o "/tmp/raccoon-refimpl-log/thrc_core.py"
-curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_gauss.py" -o "/tmp/raccoon-refimpl-log/thrc_gauss.py"
+rm -rf "$WORK"
+git clone https://github.com/p-11/lattice-hd-wallets "$WORK/lattice-hd-wallets"
+cd "$WORK/lattice-hd-wallets"
+git checkout --detach 461a5ed9b6d57e3bf8c381be3bb79325ab21d906
 python -m pip install pycryptodome mpmath
-python - <<'PY'
-# Inline one-off script; no repository file named generate_vectors.py is used.
-# It imports only the p-11 reference modules downloaded above from:
-#   p-11/lattice-hd-wallets/src/raccoon/thrc-py
+cd "$WORK/lattice-hd-wallets/src/raccoon/thrc-py"
+python test_hd_params.py
+=== HD Wallet Raccoon-G Parameter Tests ===
 ...
-PY
+=== All tests passed! ===
+PYTHONPATH=. python -c "import json; from raccoon_primitives import generate_keypair_from_seed, generate_tweak_keypair_from_seed, add_signing_keys, add_public_keys, get_matrix_seed_from_public_key, sign_message; seed=bytes(range(32)); chaincode=bytes(range(32,64)); index=0; msg=b'test message'; pk,sk=generate_keypair_from_seed(seed); a_seed=get_matrix_seed_from_public_key(pk); tweak_seed=chaincode[:32]; tpk,tsk=generate_tweak_keypair_from_seed(tweak_seed,a_seed); pkc=add_public_keys(pk,tpk); skc=add_signing_keys(sk,tsk); sigm=sign_message(sk,msg); sigc=sign_message(skc,msg); print(json.dumps({'ref_commit':'461a5ed9b6d57e3bf8c381be3bb79325ab21d906','index':index,'seed_hex':seed.hex(),'chaincode_hex':chaincode.hex(),'child_chaincode_hex':chaincode.hex(),'message_hex':msg.hex(),'pk_hex':pk.hex(),'sk_hex':sk.hex(),'pk_child_hex':pkc.hex(),'sk_child_hex':skc.hex(),'sig_master_hex':sigm.hex(),'sig_child_hex':sigc.hex()}))" > "$WORK/reference_kat_p11.generated.json"
 pk_len=16144 sk_len=32272 child_pk_len=16144 child_sk_len=32272 sig_master_len=20768 sig_child_len=20768
 generated=/tmp/raccoon-refimpl-log/reference_kat_p11.generated.json
 deterministic_fields_match=ok
