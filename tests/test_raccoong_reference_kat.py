@@ -4,7 +4,7 @@ import json
 import pathlib
 
 
-def test_raccoong_reference_kat_fixture_shape():
+def test_raccoon_g_reference_kat_fixture_shape():
     kat_file = pathlib.Path(__file__).resolve().parent / "KATs" / "sig" / "raccoong" / "reference_kat_p11.json"
     data = json.loads(kat_file.read_text())
 

@@ -15,7 +15,7 @@ return EXIT_FAILURE;
 return EXIT_SUCCESS;
 }
 
-static int check_sha256(const uint8_t *buf, size_t len, const uint8_t expected[32], const char *msg) {
+static int check_sha256_matches_expected(const uint8_t *buf, size_t len, const uint8_t expected[32], const char *msg) {
 	uint8_t digest[32];
 	OQS_SHA2_sha256(digest, buf, len);
 	return check(OQS_MEM_secure_bcmp(digest, expected, sizeof(digest)) == 0, msg);
@@ -102,10 +102,10 @@ if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_se
           "Raccoon-G-44 DetKeyGen vector failed") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(pk, sizeof(pk), expected_pk_sha256, "DetKeyGen vector drift: PK SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(pk, sizeof(pk), expected_pk_sha256, "DetKeyGen vector drift: PK SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(sk, sizeof(sk), expected_sk_sha256, "DetKeyGen vector drift: SK SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(sk, sizeof(sk), expected_sk_sha256, "DetKeyGen vector drift: SK SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
 OQS_SIG *sig = OQS_SIG_new(OQS_SIG_alg_raccoon_g_44);
@@ -165,10 +165,10 @@ if (check(OQS_SIG_hd_derive_priv(sk, chaincode, 0, sk_child, pk_child_priv) == O
           "CKDer_priv vector failed") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(pk_child_pub, sizeof(pk_child_pub), expected_pk_child_sha256, "CKDer vector drift: child PK SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(pk_child_pub, sizeof(pk_child_pub), expected_pk_child_sha256, "CKDer vector drift: child PK SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(sk_child, sizeof(sk_child), expected_sk_child_sha256, "CKDer vector drift: child SK SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(sk_child, sizeof(sk_child), expected_sk_child_sha256, "CKDer vector drift: child SK SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
 if (check(OQS_MEM_secure_bcmp(pk_child_pub, pk_child_priv, sizeof(pk_child_pub)) == 0,
@@ -188,7 +188,7 @@ if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_mast
           "Master signature verification must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(sig_master, sig_master_len, expected_sig_master_sha256, "Sign vector drift: master signature SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(sig_master, sig_master_len, expected_sig_master_sha256, "Sign vector drift: master signature SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
 
@@ -200,7 +200,7 @@ if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_child, sig_child
           "Child signature verification failed") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256(sig_child, sig_child_len, expected_sig_child_sha256, "Sign vector drift: child signature SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check_sha256_matches_expected(sig_child, sig_child_len, expected_sig_child_sha256, "Sign vector drift: child signature SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
 
