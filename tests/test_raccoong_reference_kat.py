@@ -3,12 +3,14 @@
 import json
 import pathlib
 
+SHA1_HEX_LENGTH = 40
+
 
 def test_raccoon_g_reference_kat_fixture_shape():
     kat_file = pathlib.Path(__file__).resolve().parent / "KATs" / "sig" / "raccoong" / "reference_kat_p11.json"
     data = json.loads(kat_file.read_text())
 
-    assert len(data["ref_commit"]) == 40
+    assert len(data["ref_commit"]) == SHA1_HEX_LENGTH
     assert data["index"] == 0
     assert len(bytes.fromhex(data["seed_hex"])) == 32
     assert len(bytes.fromhex(data["chaincode_hex"])) == 32
