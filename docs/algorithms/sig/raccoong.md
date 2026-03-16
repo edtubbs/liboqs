@@ -38,6 +38,26 @@ These functions use a 32-byte chaincode and 64-byte rerandomization seed (`ω`, 
 
 Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_raccoong_vectors` uses deterministic, reproducible in-repo vectors generated from the implemented DetKeyGen/CKDer flows (fixed seed, chaincode, and message).
 
+### Reference for Python KAT vectors
+
+Python KAT tests (`tests/test_kat.py` and `tests/test_kat_all.py`) validate the SHA-256 digest of `tests/kat_sig` output. For `Raccoon-G-44`, the `signature || message` KAT composition is implemented in `tests/kat_sig.c` (`combine_message_signature`), and the expected digests are stored in `tests/KATs/sig/kats.json`.
+
+To regenerate and verify these digests:
+
+```bash
+cmake -S . -B build -GNinja \
+  -DOQS_ENABLE_SIG_RACCOON_G=ON \
+  -DOQS_ENABLE_SIG_raccoon_g_44=ON
+cmake --build build --target kat_sig
+python - <<'PY'
+import hashlib, subprocess
+for extra, label in [([], "single"), (["--all"], "all")]:
+    out = subprocess.check_output(["./build/tests/kat_sig", "Raccoon-G-44", *extra], text=True)
+    out = out.replace("\r\n", "\n")
+    print(label, hashlib.sha256(out.encode()).hexdigest())
+PY
+```
+
 ## Additional implementation reference
 
 The HD derivation wiring was also cross-checked against `p-11/lattice-hd-wallets/src/raccoon` as an implementation reference for derivation flow and serialization usage. Cryptographic behavior in liboqs remains implemented natively in C in this repository.
