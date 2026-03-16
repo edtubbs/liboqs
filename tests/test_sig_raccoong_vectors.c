@@ -33,6 +33,10 @@ return EXIT_SUCCESS;
 	 * Deterministic known-answer anchors (SHA-256 digests) sourced from the
 	 * Raccoon reference implementation flow in `p-11/lattice-hd-wallets/src/raccoon`
 	 * and pinned here for liboqs regression checks.
+	 *
+	 * Full reference vectors from the existing Python/Rust implementation are
+	 * stored in:
+	 * tests/KATs/sig/raccoong/reference_kat_p11.json
 	 * Note: ePrint 2026/380 appendices stop at A/B/C and do not include
 	 * canonical vector hex dumps.
 	 */

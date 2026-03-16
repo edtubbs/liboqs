@@ -38,6 +38,12 @@ These functions use a 32-byte chaincode and 64-byte rerandomization seed (`ω`, 
 
 Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_raccoong_vectors` pins deterministic known-answer SHA-256 digests that are taken from the reference implementation behavior (`p-11/lattice-hd-wallets/src/raccoon`) for fixed seed/chaincode/message inputs.
 
+For a full vector artifact (not just digests), this repository now includes:
+
+- `tests/KATs/sig/raccoong/reference_kat_p11.json`
+
+This file stores complete hex vectors generated from the existing Python/Rust reference implementation flow (commit `461a5ed9b6d57e3bf8c381be3bb79325ab21d906`), including master/child keys and sample signatures for the fixed test inputs.
+
 ### Reference for Python KAT vectors
 
 Python KAT tests (`tests/test_kat.py` and `tests/test_kat_all.py`) validate the SHA-256 digest of `tests/kat_sig` output. For `Raccoon-G-44`, the `signature || message` KAT composition is implemented in `tests/kat_sig.c` (`combine_message_signature`), and the expected digests are stored in `tests/KATs/sig/kats.json`.
