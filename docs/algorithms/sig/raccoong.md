@@ -41,8 +41,10 @@ Because ePrint 2026/380 does not include canonical vector dumps, `test_sig_racco
 For a full vector artifact (not just digests), this repository now includes:
 
 - `tests/KATs/sig/raccoong/reference_kat_p11.json`
+- `tests/KATs/sig/raccoong/reference_kat_p11.generation.log`
 
 This file stores complete hex vectors generated from the existing Python/Rust reference implementation flow (commit `461a5ed9b6d57e3bf8c381be3bb79325ab21d906`), including master/child keys and sample signatures for the fixed test inputs.
+The accompanying `.generation.log` captures the exact command transcript used to fetch the reference Python files and generate/verify the JSON fixture.
 
 ### Reference for Python KAT vectors
 

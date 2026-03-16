@@ -1,0 +1,30 @@
+# reference_kat_p11.json generation log
+
+Date (UTC): 2026-03-16T19:28:43Z
+Repository: p-11/lattice-hd-wallets
+Reference commit: 461a5ed9b6d57e3bf8c381be3bb79325ab21d906
+Target artifact: tests/KATs/sig/raccoong/reference_kat_p11.json
+
+## Commands and output
+```bash
+WORK=/tmp/raccoon-refimpl-log
+mkdir -p "$WORK"
+base=https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/nist_kat_drbg.py" -o "/tmp/raccoon-refimpl-log/nist_kat_drbg.py"
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/polyr.py" -o "/tmp/raccoon-refimpl-log/polyr.py"
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/raccoon_primitives.py" -o "/tmp/raccoon-refimpl-log/raccoon_primitives.py"
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_api.py" -o "/tmp/raccoon-refimpl-log/thrc_api.py"
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_core.py" -o "/tmp/raccoon-refimpl-log/thrc_core.py"
+curl -Ls "https://raw.githubusercontent.com/p-11/lattice-hd-wallets/461a5ed9b6d57e3bf8c381be3bb79325ab21d906/src/raccoon/thrc-py/thrc_gauss.py" -o "/tmp/raccoon-refimpl-log/thrc_gauss.py"
+python -m pip install pycryptodome mpmath
+python generate_vectors.py
+pk_len=16144 sk_len=32272 child_pk_len=16144 child_sk_len=32272 sig_master_len=20768 sig_child_len=20768
+generated=/tmp/raccoon-refimpl-log/reference_kat_p11.generated.json
+deterministic_fields_match=ok
+committed_signature_lengths=ok(20768,20768)
+note=signatures are randomized in reference implementation; bytes can differ run-to-run
+sha256sum /tmp/raccoon-refimpl-log/reference_kat_p11.generated.json
+c1a366e45f4c1b129ac309e4810c446e7137aa8848dbca91ecc5abfbeaf722f3  /tmp/raccoon-refimpl-log/reference_kat_p11.generated.json
+sha256sum /home/runner/work/liboqs/liboqs/tests/KATs/sig/raccoong/reference_kat_p11.json
+7b7267aa4c1356907c63d745ec765d3eaee9f645a616ef1693367746fd9624e0  /home/runner/work/liboqs/liboqs/tests/KATs/sig/raccoong/reference_kat_p11.json
+```
