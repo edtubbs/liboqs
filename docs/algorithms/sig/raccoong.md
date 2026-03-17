@@ -3,6 +3,7 @@
 - **Algorithm type**: Digital signature scheme with HD derivation helpers.
 - **Parameter set implemented in liboqs**: `Raccoon-G-44`.
 - **Normative source**: *Lattice HD Wallets: Post-Quantum BIP32 Hierarchical Deterministic Wallets from Lattice Assumptions* (ePrint 2026/380), received 2026-02-24, revised 2026-02-27.
+- **Historical context**: NIST Round-1 Raccoon submission spec (`raccoon-spec-web.pdf`): <https://csrc.nist.gov/csrc/media/Projects/pqc-dig-sig/documents/round-1/spec-files/raccoon-spec-web.pdf>.
 
 ## Paper reference summary
 
@@ -14,6 +15,11 @@ This implementation follows the paper's Raccoon-G key-generation and HD derivati
 - **Gaussian sampling model and bounds**: Section 5.2 and Appendix C.
 - **Raccoon-G-44 parameters**: Section 3 and Appendix B.
 - **Appendix coverage in the paper**: Appendix A (background), Appendix B (Raccoon-G construction/parameters), Appendix C (omitted proofs). The paper does not provide canonical test vectors.
+
+The NIST Round-1 Raccoon document is useful background context, but the current
+liboqs `Raccoon-G-44` behavior and vectors in this repository are pinned against
+the `p-11/lattice-hd-wallets` reference flow and the ePrint-based HD design
+described above.
 
 ### Benchmark interpretation note
 
