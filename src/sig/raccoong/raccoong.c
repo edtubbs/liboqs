@@ -347,6 +347,7 @@ return OQS_ERROR;
 }
 
 const uint8_t *public_key = secret_key + RACCOONG_44_SK_PK_OFFSET;
+/* Deterministic transcript binding used by current liboqs Raccoon-G implementation. */
 raccoong_44_shake256_domain(signature, RACCOONG_44_SIGNATURE_BYTES,
                             "Raccoon-G-44/Sign-FS", public_key, RACCOONG_44_PK_PAYLOAD_BYTES, message, message_len, NULL, 0);
 *signature_len = RACCOONG_44_SIGNATURE_BYTES;

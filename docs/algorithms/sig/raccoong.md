@@ -6,7 +6,7 @@
 
 ## Paper reference summary
 
-This implementation follows the paper's Raccoon-G construction and HD derivation flow:
+This implementation follows the paper's Raccoon-G key-generation and HD derivation flow:
 
 - **DetKeyGen**: Section 4 (`A <- ExpandA(ρ)`, `s,e <- SampleGaussian`, `t = A·s + e`, `pk=(A,t)`, `sk=s`).
 - **RandPK / RandSK**: Section 4 (rerandomization from deterministic `ω`).
@@ -14,6 +14,16 @@ This implementation follows the paper's Raccoon-G construction and HD derivation
 - **Gaussian sampling model and bounds**: Section 5.2 and Appendix C.
 - **Raccoon-G-44 parameters**: Section 3 and Appendix B.
 - **Appendix coverage in the paper**: Appendix A (background), Appendix B (Raccoon-G construction/parameters), Appendix C (omitted proofs). The paper does not provide canonical test vectors.
+
+### Benchmark interpretation note
+
+In this repository's current `Raccoon-G-44` implementation, the `sign`/`verify`
+path is implemented as a deterministic SHAKE256 transcript check over
+`public_key_payload || message` (see `src/sig/raccoong/raccoong.c`), rather than
+a full randomized Raccoon-G signing procedure. This is sufficient for the
+deterministic KAT and HD-derivation plumbing exercised here, but raw
+throughput numbers are not directly comparable to production Falcon/Dilithium
+signing benchmarks.
 
 ## Parameter set summary (Raccoon-G-44)
 
