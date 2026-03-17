@@ -30,6 +30,18 @@ returns for each operation. If a harness times only fast error-return paths
 (for example, due to invalid input sizes or ignored failures), results can look
 implausibly fast.
 
+For sanity-checking, a direct timing run against upstream reference commit
+`461a5ed9b6d57e3bf8c381be3bb79325ab21d906` (`p-11/lattice-hd-wallets/src/raccoon/thrc-py`,
+`raccoon_primitives`) in this CI-like Linux environment measured approximately:
+
+- `generate_keypair_from_seed`: `~0.226 s`
+- `sign_message`: `~0.249 s`
+- `verify_signature`: `~0.089 s`
+
+These are only rough environment-dependent reference points, but they help
+identify obviously invalid benchmark outputs (for example, sub-microsecond
+keygen/sign/verify claims).
+
 ## Parameter set summary (Raccoon-G-44)
 
 | Parameter set | Security model | Claimed NIST Level | Public key size (bytes) | Secret key size (bytes) | Signature size (bytes) |
