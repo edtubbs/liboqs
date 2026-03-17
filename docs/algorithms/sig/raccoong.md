@@ -25,6 +25,11 @@ deterministic KAT and HD-derivation plumbing exercised here, but raw
 throughput numbers are not directly comparable to production Falcon/Dilithium
 signing benchmarks.
 
+Also, when benchmarking via external wrappers, always validate `OQS_STATUS`
+returns for each operation. If a harness times only fast error-return paths
+(for example, due to invalid input sizes or ignored failures), results can look
+implausibly fast.
+
 ## Parameter set summary (Raccoon-G-44)
 
 | Parameter set | Security model | Claimed NIST Level | Public key size (bytes) | Secret key size (bytes) | Signature size (bytes) |
