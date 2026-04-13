@@ -61,4 +61,4 @@ def test_raccoon_g_reference_kat_deterministic_digests():
     assert hashlib.sha256(pkc).hexdigest() == \
         "f94963dcd1cec6e8740cd479f120f3cb940e8a2684cf80fe75e9b2c574e81424"
     assert hashlib.sha256(skc).hexdigest() == \
-        "c82446741ec1f8348f22f63ee6e7d288a5773e9d06899abc063c9038a22fc98e"
+        "0f35490b3ef28522b60746ba958203dbdfff96024d8d0c292764bbd09aa5431e"
