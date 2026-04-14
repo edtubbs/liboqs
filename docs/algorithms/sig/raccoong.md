@@ -23,13 +23,9 @@ described above.
 
 ### Benchmark interpretation note
 
-In this repository's current `Raccoon-G-44` implementation, the `sign`/`verify`
-path is implemented as a deterministic SHAKE256 transcript check over
-`public_key_payload || message` (see `src/sig/raccoong/raccoong.c`), rather than
-a full randomized Raccoon-G signing procedure. This is sufficient for the
-deterministic KAT and HD-derivation plumbing exercised here, but raw
-throughput numbers are not directly comparable to production Falcon/Dilithium
-signing benchmarks.
+`Raccoon-G-44` signing is randomized (fresh per-sign nonce seed), so signatures
+for the same key/message are expected to differ while still verifying under the
+same public key.
 
 Also, when benchmarking via external wrappers, always validate `OQS_STATUS`
 returns for each operation. If a harness times only fast error-return paths

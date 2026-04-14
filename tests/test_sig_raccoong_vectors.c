@@ -72,18 +72,6 @@ const uint8_t expected_sk_child_sha256[32] = {
 0x32, 0x92, 0x38, 0x85, 0xc4, 0xe5, 0x56, 0xeb,
 0x10, 0xc9, 0xb5, 0x5b, 0x75, 0xbd, 0x5b, 0x17
 };
-const uint8_t expected_sig_master_sha256[32] = {
-0xc6, 0xb4, 0x84, 0x57, 0x3a, 0x45, 0x9c, 0x08,
-0xbe, 0x95, 0xd7, 0x4e, 0x72, 0x5e, 0x44, 0xed,
-0x61, 0x09, 0xfd, 0xfd, 0x9c, 0x39, 0x20, 0x15,
-0x83, 0xa7, 0x8c, 0xf5, 0xc4, 0x86, 0x5a, 0xea
-};
-const uint8_t expected_sig_child_sha256[32] = {
-0x7f, 0xdd, 0x29, 0x83, 0xc1, 0x63, 0x8d, 0xe5,
-0xf0, 0xaf, 0xc6, 0x27, 0x6f, 0x7c, 0xcb, 0x2c,
-0xea, 0xc9, 0x40, 0x6a, 0x67, 0xb6, 0x37, 0x9b,
-0xc1, 0x64, 0xe7, 0x6c, 0x05, 0x02, 0xd3, 0xdf
-};
 const size_t pk_payload_bytes = (size_t)(4 * 4 + 4) * 256 * 3;
 const size_t sk_payload_bytes = (size_t)(4 + 4) * 256 * 3 + OQS_SIG_raccoon_g_44_length_public_key;
 
@@ -94,9 +82,10 @@ uint8_t pk_child_pub_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t pk_child_priv[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk_child[OQS_SIG_raccoon_g_44_length_secret_key];
 uint8_t sig_master[OQS_SIG_raccoon_g_44_length_signature];
+uint8_t sig_master_2[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t sig_child[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t pk_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
-size_t sig_master_len = 0, sig_child_len = 0;
+size_t sig_master_len = 0, sig_master_len_2 = 0, sig_child_len = 0;
 
 if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_seed)) == OQS_SUCCESS,
           "Raccoon-G-44 DetKeyGen vector failed") != EXIT_SUCCESS) {
@@ -180,15 +169,29 @@ if (check(OQS_SIG_raccoon_g_44_sign(sig_master, &sig_master_len, msg, sizeof(msg
           "Master signature generation failed") != EXIT_SUCCESS) {
 goto err;
 }
+if (check(OQS_SIG_raccoon_g_44_sign(sig_master_2, &sig_master_len_2, msg, sizeof(msg) - 1, sk) == OQS_SUCCESS,
+          "Second master signature generation failed") != EXIT_SUCCESS) {
+goto err;
+}
 if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_master_len, pk) == OQS_SUCCESS,
           "Master signature verification failed") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master_2, sig_master_len_2, pk) == OQS_SUCCESS,
+          "Second master signature verification failed") != EXIT_SUCCESS) {
 goto err;
 }
 if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_master_len, pk_noncanonical) == OQS_SUCCESS,
           "Master signature verification must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256_matches_expected(sig_master, sig_master_len, expected_sig_master_sha256, "Sign vector drift: master signature SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check(sig_master_len == OQS_SIG_raccoon_g_44_length_signature &&
+          sig_master_len_2 == OQS_SIG_raccoon_g_44_length_signature,
+          "Master signatures must use fixed ABI length") != EXIT_SUCCESS) {
+goto err;
+}
+if (check(OQS_MEM_secure_bcmp(sig_master, sig_master_2, OQS_SIG_raccoon_g_44_length_signature) != 0,
+          "Randomized signing failure: two signatures for same key/message are identical") != EXIT_SUCCESS) {
 goto err;
 }
 
@@ -200,7 +203,8 @@ if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_child, sig_child
           "Child signature verification failed") != EXIT_SUCCESS) {
 goto err;
 }
-if (check_sha256_matches_expected(sig_child, sig_child_len, expected_sig_child_sha256, "Sign vector drift: child signature SHA-256 mismatch") != EXIT_SUCCESS) {
+if (check(sig_child_len == OQS_SIG_raccoon_g_44_length_signature,
+          "Child signature must use fixed ABI length") != EXIT_SUCCESS) {
 goto err;
 }
 
