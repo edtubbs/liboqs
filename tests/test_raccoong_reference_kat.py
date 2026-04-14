@@ -40,7 +40,7 @@ def test_raccoon_g_reference_kat_generation_log_present():
 
 def test_raccoon_g_reference_kat_deterministic_digests():
     """Verify fixture deterministic fields match known SHA-256 digests
-    from p-11/lattice-hd-wallets commit {REFERENCE_COMMIT}."""
+    from p-11/lattice-hd-wallets commit 461a5ed9b6d57e3bf8c381be3bb79325ab21d906."""
     import hashlib
 
     kat_file = pathlib.Path(__file__).resolve().parent / "KATs" / "sig" / "raccoong" / "reference_kat_p11.json"

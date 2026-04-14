@@ -527,12 +527,17 @@ return OQS_SUCCESS;
 
 uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
-memcpy(msg, pk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
-raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
+	memcpy(msg, pk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
+	raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
 	if (raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg)) != OQS_SUCCESS) {
+		OQS_MEM_cleanse(msg, sizeof(msg));
+		OQS_MEM_cleanse(omega, sizeof(omega));
 		return OQS_ERROR;
 	}
-	return raccoong_44_hd_randpk(pk_parent, omega, pk_child);
+	OQS_STATUS rc = raccoong_44_hd_randpk(pk_parent, omega, pk_child);
+	OQS_MEM_cleanse(msg, sizeof(msg));
+	OQS_MEM_cleanse(omega, sizeof(omega));
+	return rc;
 }
 
 OQS_STATUS raccoong_44_hd_derive_priv(const uint8_t *sk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *sk_child, uint8_t *pk_child) {
@@ -549,10 +554,15 @@ return OQS_SUCCESS;
 
 uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
-memcpy(msg, sk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
-raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
+	memcpy(msg, sk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
+	raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
 	if (raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg)) != OQS_SUCCESS) {
+		OQS_MEM_cleanse(msg, sizeof(msg));
+		OQS_MEM_cleanse(omega, sizeof(omega));
 		return OQS_ERROR;
 	}
-	return raccoong_44_hd_randsk(sk_parent, omega, sk_child, pk_child);
+	OQS_STATUS rc = raccoong_44_hd_randsk(sk_parent, omega, sk_child, pk_child);
+	OQS_MEM_cleanse(msg, sizeof(msg));
+	OQS_MEM_cleanse(omega, sizeof(omega));
+	return rc;
 }
