@@ -10,10 +10,10 @@
 #define OQS_ENABLE_SIG_RACCOON_G_44 1
 #endif
 
-#define OQS_SIG_raccoon_g_44_length_public_key 16384
-#define OQS_SIG_raccoon_g_44_length_secret_key 32768
-#define OQS_SIG_raccoon_g_44_length_signature 32768
-#define OQS_SIG_raccoon_g_44_length_keypair_seed 64
+#define OQS_SIG_raccoon_g_44_length_public_key 16144
+#define OQS_SIG_raccoon_g_44_length_secret_key 32272
+#define OQS_SIG_raccoon_g_44_length_signature 20768
+#define OQS_SIG_raccoon_g_44_length_keypair_seed 32
 #define OQS_SIG_raccoon_g_44_length_chaincode 32
 #define OQS_SIG_raccoon_g_44_length_rerandomization 64
 

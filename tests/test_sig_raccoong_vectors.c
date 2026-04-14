@@ -16,9 +16,9 @@ return EXIT_SUCCESS;
 }
 
 static int check_sha256_matches_expected(const uint8_t *buf, size_t len, const uint8_t expected[32], const char *msg) {
-	uint8_t digest[32];
-	OQS_SHA2_sha256(digest, buf, len);
-	return check(OQS_MEM_secure_bcmp(digest, expected, sizeof(digest)) == 0, msg);
+uint8_t digest[32];
+OQS_SHA2_sha256(digest, buf, len);
+return check(OQS_MEM_secure_bcmp(digest, expected, sizeof(digest)) == 0, msg);
 }
 
 int main(void) {
@@ -29,17 +29,6 @@ printf("Raccoon-G-44 not enabled at compile-time.\n");
 OQS_destroy();
 return EXIT_SUCCESS;
 #else
-	/*
-	 * Deterministic known-answer anchors (SHA-256 digests) sourced from the
-	 * Raccoon reference implementation flow in `p-11/lattice-hd-wallets/src/raccoon`
-	 * and pinned here for liboqs regression checks.
-	 *
-	 * Full reference vectors from the existing Python/Rust implementation are
-	 * stored in:
-	 * tests/KATs/sig/raccoong/reference_kat_p11.json
-	 * Note: ePrint 2026/380 appendices stop at A/B/C and do not include
-	 * canonical vector hex dumps.
-	 */
 const uint8_t master_seed[32] = {
 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -48,43 +37,41 @@ const uint8_t master_seed[32] = {
 };
 const uint8_t chaincode[OQS_SIG_raccoon_g_44_length_chaincode] = {0};
 const uint8_t msg[] = "test message";
+
+/* SHA-256 anchors from tests/KATs/sig/raccoong/reference_kat_p11.json */
 const uint8_t expected_pk_sha256[32] = {
-0x73, 0xfd, 0x4b, 0xe0, 0x94, 0xb2, 0xbf, 0xfb,
-0x78, 0xa9, 0x43, 0x64, 0x02, 0xdd, 0xfa, 0xfe,
-0xef, 0x31, 0xdc, 0x47, 0x7d, 0xe4, 0x00, 0xb9,
-0x39, 0x66, 0x71, 0xa8, 0xc9, 0xe8, 0x1d, 0x6b
+0x79, 0x3c, 0x60, 0xca, 0x7c, 0xfd, 0x7f, 0x96,
+0xf7, 0x98, 0xa3, 0x41, 0x8b, 0xa7, 0x93, 0xcf,
+0x6b, 0x6f, 0x47, 0xd7, 0x6a, 0xa3, 0xb3, 0x7b,
+0x59, 0x2d, 0xb0, 0x3c, 0x4d, 0x7e, 0x82, 0xe1
 };
 const uint8_t expected_sk_sha256[32] = {
-0x6b, 0x6b, 0xa8, 0x76, 0x06, 0x40, 0x62, 0xad,
-0xde, 0x66, 0xb8, 0xf1, 0x0e, 0xdb, 0xd7, 0x7f,
-0x55, 0x40, 0xf3, 0x78, 0x42, 0x42, 0x29, 0x64,
-0xda, 0xc3, 0xdd, 0x2b, 0xe3, 0xce, 0x95, 0xe4
+0x4e, 0x11, 0x4d, 0x70, 0x87, 0x23, 0xd5, 0x35,
+0x90, 0xe7, 0x6c, 0xc4, 0x78, 0xa7, 0x84, 0xb1,
+0x59, 0x04, 0xc7, 0x7a, 0x78, 0x12, 0xc4, 0x46,
+0x5f, 0x3b, 0xaa, 0x41, 0xd9, 0x1d, 0x83, 0xfe
 };
 const uint8_t expected_pk_child_sha256[32] = {
-0xd7, 0x21, 0x2a, 0xee, 0x12, 0xb8, 0xcb, 0xb9,
-0x7a, 0xc5, 0xcc, 0xf9, 0xac, 0xa0, 0xc1, 0x73,
-0x7c, 0xb7, 0x91, 0xdf, 0x1a, 0xce, 0xf3, 0x18,
-0x02, 0x66, 0x20, 0x9e, 0xfb, 0xe0, 0xf2, 0x5a
+0xf9, 0x49, 0x63, 0xdc, 0xd1, 0xce, 0xc6, 0xe8,
+0x74, 0x0c, 0xd4, 0x79, 0xf1, 0x20, 0xf3, 0xcb,
+0x94, 0x0e, 0x8a, 0x26, 0x84, 0xcf, 0x80, 0xfe,
+0x75, 0xe9, 0xb2, 0xc5, 0x74, 0xe8, 0x14, 0x24
 };
 const uint8_t expected_sk_child_sha256[32] = {
-0x81, 0xab, 0x98, 0x24, 0xad, 0x80, 0x30, 0xf3,
-0x17, 0x5b, 0x26, 0xf7, 0x0d, 0x4a, 0x29, 0x19,
-0x32, 0x92, 0x38, 0x85, 0xc4, 0xe5, 0x56, 0xeb,
-0x10, 0xc9, 0xb5, 0x5b, 0x75, 0xbd, 0x5b, 0x17
+0x0f, 0x35, 0x49, 0x0b, 0x3e, 0xf2, 0x85, 0x22,
+0xb6, 0x07, 0x46, 0xba, 0x95, 0x82, 0x03, 0xdb,
+0xdf, 0xff, 0x96, 0x02, 0x4d, 0x8d, 0x0c, 0x29,
+0x27, 0x64, 0xbb, 0xd0, 0x9a, 0xa5, 0x43, 0x1e
 };
-const size_t pk_payload_bytes = (size_t)(4 * 4 + 4) * 256 * 3;
-const size_t sk_payload_bytes = (size_t)(4 + 4) * 256 * 3 + OQS_SIG_raccoon_g_44_length_public_key;
 
 uint8_t pk[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk[OQS_SIG_raccoon_g_44_length_secret_key];
 uint8_t pk_child_pub[OQS_SIG_raccoon_g_44_length_public_key];
-uint8_t pk_child_pub_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t pk_child_priv[OQS_SIG_raccoon_g_44_length_public_key];
 uint8_t sk_child[OQS_SIG_raccoon_g_44_length_secret_key];
 uint8_t sig_master[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t sig_master_2[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t sig_child[OQS_SIG_raccoon_g_44_length_signature];
-uint8_t pk_noncanonical[OQS_SIG_raccoon_g_44_length_public_key];
 size_t sig_master_len = 0, sig_master_len_2 = 0, sig_child_len = 0;
 
 if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_seed)) == OQS_SUCCESS,
@@ -97,57 +84,33 @@ goto err;
 if (check_sha256_matches_expected(sk, sizeof(sk), expected_sk_sha256, "DetKeyGen vector drift: SK SHA-256 mismatch") != EXIT_SUCCESS) {
 goto err;
 }
+
 OQS_SIG *sig = OQS_SIG_new(OQS_SIG_alg_raccoon_g_44);
 if (check(sig != NULL, "OQS_SIG_new(Raccoon-G-44) failed") != EXIT_SUCCESS) {
 goto err;
 }
 if (check(sig->length_public_key == OQS_SIG_raccoon_g_44_length_public_key &&
-          sig->length_public_key == 16384,
+          sig->length_public_key == 16144,
           "Binary compatibility failure: public key size changed") != EXIT_SUCCESS) {
 OQS_SIG_free(sig);
 goto err;
 }
 if (check(sig->length_secret_key == OQS_SIG_raccoon_g_44_length_secret_key &&
-          sig->length_secret_key == 32768,
+          sig->length_secret_key == 32272,
           "Binary compatibility failure: secret key size changed") != EXIT_SUCCESS) {
 OQS_SIG_free(sig);
 goto err;
 }
 if (check(sig->length_signature == OQS_SIG_raccoon_g_44_length_signature &&
-          sig->length_signature == 32768,
+          sig->length_signature == 20768,
           "Binary compatibility failure: signature size changed") != EXIT_SUCCESS) {
 OQS_SIG_free(sig);
 goto err;
 }
 OQS_SIG_free(sig);
-if (check(pk_payload_bytes < sizeof(pk) &&
-          sk_payload_bytes < sizeof(sk),
-          "Internal test assumptions invalid for Raccoon-G-44 payload sizes") != EXIT_SUCCESS) {
-goto err;
-}
-for (size_t i = pk_payload_bytes; i < sizeof(pk); i++) {
-if (check(pk[i] == 0, "Binary compatibility failure: PK padding is not canonical zero") != EXIT_SUCCESS) {
-goto err;
-}
-}
-for (size_t i = sk_payload_bytes; i < sizeof(sk); i++) {
-if (check(sk[i] == 0, "Binary compatibility failure: SK padding is not canonical zero") != EXIT_SUCCESS) {
-goto err;
-}
-}
-memcpy(pk_noncanonical, pk, sizeof(pk_noncanonical));
-memset(pk_noncanonical + pk_payload_bytes, 0xA5, sizeof(pk_noncanonical) - pk_payload_bytes);
 
 if (check(OQS_SIG_hd_derive_pub(pk, chaincode, 0, pk_child_pub) == OQS_SUCCESS,
           "CKDer_pub vector failed") != EXIT_SUCCESS) {
-goto err;
-}
-if (check(OQS_SIG_hd_derive_pub(pk_noncanonical, chaincode, 0, pk_child_pub_noncanonical) == OQS_SUCCESS,
-          "CKDer_pub with non-canonical PK padding failed") != EXIT_SUCCESS) {
-goto err;
-}
-if (check(OQS_MEM_secure_bcmp(pk_child_pub, pk_child_pub_noncanonical, sizeof(pk_child_pub)) == 0,
-          "HD derivation must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
 goto err;
 }
 if (check(OQS_SIG_hd_derive_priv(sk, chaincode, 0, sk_child, pk_child_priv) == OQS_SUCCESS,
@@ -181,10 +144,6 @@ if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master_2, sig_ma
           "Second master signature verification failed") != EXIT_SUCCESS) {
 goto err;
 }
-if (check(OQS_SIG_raccoon_g_44_verify(msg, sizeof(msg) - 1, sig_master, sig_master_len, pk_noncanonical) == OQS_SUCCESS,
-          "Master signature verification must ignore reserved PK padding bytes") != EXIT_SUCCESS) {
-goto err;
-}
 if (check(sig_master_len == OQS_SIG_raccoon_g_44_length_signature &&
           sig_master_len_2 == OQS_SIG_raccoon_g_44_length_signature,
           "Master signatures must use fixed ABI length") != EXIT_SUCCESS) {
@@ -208,7 +167,7 @@ if (check(sig_child_len == OQS_SIG_raccoon_g_44_length_signature,
 goto err;
 }
 
-	printf("Raccoon-G-44 deterministic vector tests passed.\n");
+printf("Raccoon-G-44 deterministic vector tests passed.\n");
 OQS_destroy();
 return EXIT_SUCCESS;
 

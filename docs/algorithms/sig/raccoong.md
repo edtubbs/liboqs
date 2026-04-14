@@ -48,9 +48,9 @@ keygen/sign/verify claims).
 
 | Parameter set | Security model | Claimed NIST Level | Public key size (bytes) | Secret key size (bytes) | Signature size (bytes) |
 |:-------------:|:---------------|-------------------:|------------------------:|------------------------:|-----------------------:|
-| Raccoon-G-44  | EUF-CMA        |                  2 |                   16384 |                   32768 |                  32768 |
+| Raccoon-G-44  | EUF-CMA        |                  2 |                   16144 |                   32272 |                  20768 |
 
-For ABI/binary compatibility, these exported sizes are treated as a contract in this repository. Internal tests verify they remain unchanged and that fixed-size key buffers keep canonical zero padding in reserved trailing bytes.
+For ABI/binary compatibility, these exported sizes are treated as a contract in this repository. Internal tests verify they remain unchanged and continue to match the pinned reference KAT artifact.
 
 ## HD-specific API surface
 
