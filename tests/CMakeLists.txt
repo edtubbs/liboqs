@@ -110,6 +110,10 @@ set(KEM_TESTS example_kem kat_kem test_kem test_kem_mem speed_kem vectors_kem)
 # SIG API tests
 add_executable(example_sig example_sig.c)
 target_link_libraries(example_sig PRIVATE ${TEST_DEPS})
+add_executable(example_sig_raccoong example_sig_raccoong.c)
+target_link_libraries(example_sig_raccoong PRIVATE ${TEST_DEPS})
+add_executable(test_sig_raccoong_vectors test_sig_raccoong_vectors.c)
+target_link_libraries(test_sig_raccoong_vectors PRIVATE ${TEST_DEPS})
 
 if(OQS_BUILD_FUZZ_TESTS AND '${CMAKE_C_COMPILER_ID}' STREQUAL 'Clang')
     add_executable(fuzz_test_sig fuzz_test_sig.c)
@@ -170,7 +174,7 @@ add_executable(speed_sig speed_sig.c)
 target_link_libraries(speed_sig PRIVATE ${TEST_DEPS})
 
 
-set(SIG_TESTS example_sig kat_sig test_sig test_sig_mem speed_sig vectors_sig)
+set(SIG_TESTS example_sig example_sig_raccoong test_sig_raccoong_vectors kat_sig test_sig test_sig_mem speed_sig vectors_sig)
 
 # SIG_STFL API tests
 add_executable(test_sig_stfl test_sig_stfl.c test_helpers.c)
