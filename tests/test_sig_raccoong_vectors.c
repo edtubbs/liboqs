@@ -29,7 +29,7 @@ printf("Raccoon-G-44 not enabled at compile-time.\n");
 OQS_destroy();
 return EXIT_SUCCESS;
 #else
-const uint8_t master_seed[32] = {
+	const uint8_t test_vector_seed[32] = {
 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -74,8 +74,8 @@ uint8_t sig_master_2[OQS_SIG_raccoon_g_44_length_signature];
 uint8_t sig_child[OQS_SIG_raccoon_g_44_length_signature];
 size_t sig_master_len = 0, sig_master_len_2 = 0, sig_child_len = 0;
 
-if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, master_seed, sizeof(master_seed)) == OQS_SUCCESS,
-          "Raccoon-G-44 DetKeyGen vector failed") != EXIT_SUCCESS) {
+	if (check(OQS_SIG_raccoon_g_44_keypair_det(pk, sk, test_vector_seed, sizeof(test_vector_seed)) == OQS_SUCCESS,
+	          "Raccoon-G-44 deterministic keypair generation vector failed") != EXIT_SUCCESS) {
 goto err;
 }
 if (check_sha256_matches_expected(pk, sizeof(pk), expected_pk_sha256, "DetKeyGen vector drift: PK SHA-256 mismatch") != EXIT_SUCCESS) {

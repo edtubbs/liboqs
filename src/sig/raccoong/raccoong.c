@@ -200,7 +200,7 @@ off += RACCOONG_44_H_COEFF_BYTES;
 }
 }
 
-static void raccoong_hmac_sha512(uint8_t out[64], const uint8_t *key, size_t key_len, const uint8_t *msg, size_t msg_len) {
+static OQS_STATUS raccoong_hmac_sha512(uint8_t out[64], const uint8_t *key, size_t key_len, const uint8_t *msg, size_t msg_len) {
 uint8_t k0[128] = {0};
 if (key_len > sizeof(k0)) {
 OQS_SHA2_sha512(k0, key, key_len);
@@ -214,13 +214,15 @@ ipad[i] = (uint8_t)(k0[i] ^ 0x36u);
 opad[i] = (uint8_t)(k0[i] ^ 0x5cu);
 }
 
-uint8_t *inner_input = OQS_MEM_malloc(128 + msg_len);
-uint8_t inner_hash[64];
-uint8_t outer_input[128 + 64];
-if (inner_input == NULL) {
-memset(out, 0, 64);
-return;
-}
+	uint8_t *inner_input = OQS_MEM_malloc(128 + msg_len);
+	if (inner_input == NULL) {
+		OQS_MEM_cleanse(k0, sizeof(k0));
+		OQS_MEM_cleanse(ipad, sizeof(ipad));
+		OQS_MEM_cleanse(opad, sizeof(opad));
+		return OQS_ERROR;
+	}
+	uint8_t inner_hash[64];
+	uint8_t outer_input[128 + 64];
 memcpy(inner_input, ipad, 128);
 if (msg_len > 0) {
 memcpy(inner_input + 128, msg, msg_len);
@@ -235,8 +237,9 @@ OQS_MEM_cleanse(inner_hash, sizeof(inner_hash));
 OQS_MEM_cleanse(k0, sizeof(k0));
 OQS_MEM_cleanse(ipad, sizeof(ipad));
 OQS_MEM_cleanse(opad, sizeof(opad));
-OQS_MEM_cleanse(inner_input, 128 + msg_len);
-OQS_MEM_insecure_free(inner_input);
+	OQS_MEM_cleanse(inner_input, 128 + msg_len);
+	OQS_MEM_insecure_free(inner_input);
+	return OQS_SUCCESS;
 }
 
 static void raccoong_derive_vector(uint64_t *out, size_t coeffs, const char *domain,
@@ -526,8 +529,10 @@ uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
 memcpy(msg, pk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
 raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
-raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg));
-return raccoong_44_hd_randpk(pk_parent, omega, pk_child);
+	if (raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg)) != OQS_SUCCESS) {
+		return OQS_ERROR;
+	}
+	return raccoong_44_hd_randpk(pk_parent, omega, pk_child);
 }
 
 OQS_STATUS raccoong_44_hd_derive_priv(const uint8_t *sk_parent, const uint8_t *chaincode, uint32_t index, uint8_t *sk_child, uint8_t *pk_child) {
@@ -546,6 +551,8 @@ uint8_t msg[RACCOONG_44_PK_PAYLOAD_BYTES + 4];
 uint8_t omega[RACCOONG_44_RERAND_BYTES];
 memcpy(msg, sk_parent, RACCOONG_44_PK_PAYLOAD_BYTES);
 raccoong_u32_to_be(msg + RACCOONG_44_PK_PAYLOAD_BYTES, index);
-raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg));
-return raccoong_44_hd_randsk(sk_parent, omega, sk_child, pk_child);
+	if (raccoong_hmac_sha512(omega, chaincode, RACCOONG_44_CHAINCODE_BYTES, msg, sizeof(msg)) != OQS_SUCCESS) {
+		return OQS_ERROR;
+	}
+	return raccoong_44_hd_randsk(sk_parent, omega, sk_child, pk_child);
 }

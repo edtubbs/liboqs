@@ -4,6 +4,7 @@ import json
 import pathlib
 
 SHA1_HEX_LENGTH = 40
+REFERENCE_COMMIT = "461a5ed9b6d57e3bf8c381be3bb79325ab21d906"
 
 
 def test_raccoon_g_reference_kat_fixture_shape():
@@ -29,17 +30,17 @@ def test_raccoon_g_reference_kat_generation_log_present():
     log_file = pathlib.Path(__file__).resolve().parent / "KATs" / "sig" / "raccoong" / "reference_kat_p11.generation.log"
     text = log_file.read_text()
 
-    assert "Reference commit: 461a5ed9b6d57e3bf8c381be3bb79325ab21d906" in text
+    assert f"Reference commit: {REFERENCE_COMMIT}" in text
     assert "Target artifact: tests/KATs/sig/raccoong/reference_kat_p11.json" in text
     assert "git clone https://github.com/p-11/lattice-hd-wallets" in text
     assert "PYTHONPATH=. python test_raccoon_primitives.py" in text
-    assert "from raccoon_primitives import" in text
+    assert "from raccoon_primitives import (" in text
     assert "verify_master=True verify_child=True" in text
 
 
 def test_raccoon_g_reference_kat_deterministic_digests():
     """Verify fixture deterministic fields match known SHA-256 digests
-    from p-11/lattice-hd-wallets commit 461a5ed9."""
+    from p-11/lattice-hd-wallets commit {REFERENCE_COMMIT}."""
     import hashlib
 
     kat_file = pathlib.Path(__file__).resolve().parent / "KATs" / "sig" / "raccoong" / "reference_kat_p11.json"

@@ -636,6 +636,8 @@ OQS_API OQS_STATUS OQS_SIG_keypair(const OQS_SIG *sig, uint8_t *public_key, uint
  * Deterministic keypair generation algorithm.
  *
  * The seed format and size are implementation specific.
+ * For Raccoon-G-44, the deterministic keypair seed size is 32 bytes
+ * (`OQS_SIG_raccoon_g_44_length_keypair_seed`).
  * Currently only supported by Raccoon-G-44; unsupported algorithms return OQS_ERROR.
  *
  * @param[in] sig The OQS_SIG object representing the signature scheme.
