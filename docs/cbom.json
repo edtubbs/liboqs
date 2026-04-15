@@ -2,23 +2,23 @@
   "$schema": "https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:b94dbb44-6f02-46d2-8674-4669d0a0e8e2",
+  "serialNumber": "urn:uuid:c561644e-740b-4c75-8c37-4b1bfcb5be64",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-02-20T14:01:02.620635+00:00",
+    "timestamp": "2026-04-15T02:26:35.627059+00:00",
     "component": {
       "type": "library",
-      "bom-ref": "pkg:github/open-quantum-safe/liboqs@fc08ab40cf34941a41e67d91921c20a428aa6ec0",
+      "bom-ref": "pkg:github/open-quantum-safe/liboqs@9b182d509cce6a9228ed44042d984e0c1a5bbbe9",
       "name": "liboqs",
-      "version": "fc08ab40cf34941a41e67d91921c20a428aa6ec0"
+      "version": "9b182d509cce6a9228ed44042d984e0c1a5bbbe9"
     }
   },
   "components": [
     {
       "type": "library",
-      "bom-ref": "pkg:github/open-quantum-safe/liboqs@fc08ab40cf34941a41e67d91921c20a428aa6ec0",
+      "bom-ref": "pkg:github/open-quantum-safe/liboqs@9b182d509cce6a9228ed44042d984e0c1a5bbbe9",
       "name": "liboqs",
-      "version": "fc08ab40cf34941a41e67d91921c20a428aa6ec0"
+      "version": "9b182d509cce6a9228ed44042d984e0c1a5bbbe9"
     },
     {
       "type": "cryptographic-asset",
@@ -3077,6 +3077,26 @@
           ],
           "nistQuantumSecurityLevel": 5,
           "implementationPlatform": "armv8-a"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "alg:Raccoon-G-44:ref:generic",
+      "name": "Raccoon-G",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Raccoon-G-44",
+          "primitive": "signature",
+          "executionEnvironment": "software-plain-ram",
+          "cryptoFunctions": [
+            "keygen",
+            "sign",
+            "verify"
+          ],
+          "nistQuantumSecurityLevel": 2,
+          "implementationPlatform": "generic"
         }
       }
     },
@@ -7667,7 +7687,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:github/open-quantum-safe/liboqs@fc08ab40cf34941a41e67d91921c20a428aa6ec0",
+      "ref": "pkg:github/open-quantum-safe/liboqs@9b182d509cce6a9228ed44042d984e0c1a5bbbe9",
       "provides": [
         "alg:BIKE-L1:master:x86_64",
         "alg:BIKE-L3:master:x86_64",
@@ -7822,6 +7842,7 @@
         "alg:ML-DSA-87:ref:generic",
         "alg:ML-DSA-87:x86_64:x86_64",
         "alg:ML-DSA-87:aarch64:armv8-a",
+        "alg:Raccoon-G-44:ref:generic",
         "alg:SLH_DSA_PURE_SHA2_128S:slhdsa-c:generic",
         "alg:SLH_DSA_PURE_SHA2_128F:slhdsa-c:generic",
         "alg:SLH_DSA_PURE_SHA2_192S:slhdsa-c:generic",
@@ -8996,6 +9017,12 @@
     },
     {
       "ref": "alg:ML-DSA-87:aarch64:armv8-a",
+      "dependsOn": [
+        "alg:sha3"
+      ]
+    },
+    {
+      "ref": "alg:Raccoon-G-44:ref:generic",
       "dependsOn": [
         "alg:sha3"
       ]

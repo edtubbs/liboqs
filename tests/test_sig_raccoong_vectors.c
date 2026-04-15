@@ -15,11 +15,13 @@ static int check(int ok, const char *msg) {
 	return EXIT_SUCCESS;
 }
 
+#ifdef OQS_ENABLE_SIG_raccoon_g_44
 static int check_sha256_matches_expected(const uint8_t *buf, size_t len, const uint8_t expected[32], const char *msg) {
 	uint8_t digest[32];
 	OQS_SHA2_sha256(digest, buf, len);
 	return check(OQS_MEM_secure_bcmp(digest, expected, sizeof(digest)) == 0, msg);
 }
+#endif
 
 int main(void) {
 	OQS_init();

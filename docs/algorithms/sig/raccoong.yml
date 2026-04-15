@@ -11,7 +11,7 @@ primary-upstream:
   source: https://github.com/edtubbs/liboqs/tree/add-raccoon-g/src/sig/raccoong
   spdx-license-identifier: MIT
 parameter-sets:
-- name: raccoon_g_44
+- name: Raccoon-G-44
   oqs_alg: OQS_SIG_alg_raccoon_g_44
   claimed-nist-level: 2
   claimed-security: EUF-CMA
