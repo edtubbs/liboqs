@@ -1,0 +1,31 @@
+name: Raccoon-G
+type: signature
+principal-submitters:
+- Ed Tubbs
+crypto-assumption: hardness of Module-LWE with Gaussian noise
+website: https://eprint.iacr.org/2026/380
+nist-round: N/A
+standardization-status: Experimental HD lattice signature candidate
+spec-version: ePrint 2026/380
+primary-upstream:
+  source: https://github.com/edtubbs/liboqs/tree/add-raccoon-g/src/sig/raccoong
+  spdx-license-identifier: MIT
+parameter-sets:
+- name: raccoon_g_44
+  oqs_alg: OQS_SIG_alg_raccoon_g_44
+  claimed-nist-level: 2
+  claimed-security: EUF-CMA
+  length-public-key: 16144
+  length-secret-key: 32272
+  length-signature: 20768
+  implementations-switch-on-runtime-cpu-features: false
+  implementations:
+  - upstream: primary-upstream
+    upstream-id: ref
+    supported-platforms: all
+    common-crypto:
+    - SHA3: liboqs
+    no-secret-dependent-branching-claimed: false
+    no-secret-dependent-branching-checked-by-valgrind: false
+    large-stack-usage: true
+    default: true
